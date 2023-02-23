@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-4">
+          <select class="form-select" id="citySelect"></select>
+        </div>
+        <div class="col-4">
+          <select class="form-select" id="districtSelect">
+            TP HCM
+          </select>
+        </div>
+        <div class="col-4">
+          <form action="">
+            <button class="btn btn-success" type="submit">
+              <i class="fa-solid fa-magnifying-glass"></i> Tìm Kiếm
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      const cityList = "https://thongtindoanhnghiep.co/api/city";
+
+      const fetchData = async (api) => {
+        try {
+          const response = await fetch(api);
+          const countries = await response.json();
+          const value = countries;
+          return value;
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      const getCity = new Promise((reso, reje) => {
+        const data = fetchData(cityList);
+        if (data) {
+          reso(data);
+        } else {
+          reje("oops!");
+        }
+      });
+
+      getCity
+        .then((res) => {
+          const cityName = [];
+          let i = 0;
+          for (const item of res.LtsItem) {
+            cityName[i] = [item.ID, item.Title];
+            i++;
+          }
+          let citySelect = document.querySelector("#citySelect");
+
+          for (let i = 0; i < cityName.length; i++) {
+            let option = document.createElement("option");
+            option.id = cityName[i][0];
+            option.innerHTML = cityName[i][1];
+            option.value = cityName[i][0];
+            citySelect.appendChild(option);
+          }
+        })
+        .catch((err) => console.log(err));
+
+      const hienThiQuan = (id) => {
+        const districtList =
+          "https://thongtindoanhnghiep.co/api/city/" + id + "/district";
+
+        const districtName = [];
+
+        const getDisctrict = new Promise((reso, reje) => {
+          const data = fetchData(districtList);
+          if (data) {
+            reso(data);
+          } else {
+            reje("oops!");
+          }
+        });
+
+        getDisctrict
+          .then((res) => {
+            let i = 0;
+            for (const item of res) {
+              districtName[i] = [item.ID, item.Title];
+              i++;
+            }
+          })
+          .catch((err) => console.log(err));
+          let districtSelect = document.querySelector("#districtSelect");
+          for (let i = 0; i < districtName.length; i++) {
+            let option = document.createElement("option");
+            option.id = districtName[i][0];
+            option.innerHTML = districtName[i][1];
+            option.value = districtName[i][0];
+            districtSelect.appendChild(option);
+          }
+      };
+
+      let city = document.getElementById("citySelect");
+      let cityID = city.value;
+      hienThiQuan(cityID);
+    </script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+      integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/ee39434323.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+      integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+      integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
