@@ -16,73 +16,100 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-4">
-          <select class="form-select" id="citySelect"></select>
+        <div class="col-5">
+          <label for="tukhoa">Nhập từ khóa</label>
+          <input type="text" id="tukhoa" class="form-control" />
+        </div>
+        <div class="col-3">
+          <select
+            class="form-select"
+            id="citySelect"
+            onchange="hienThiQuan(document.getElementById('citySelect').selectedIndex+1)"
+          ></select>
         </div>
         <div class="col-4">
-          <select class="form-select" id="districtSelect">
-            TP HCM
-          </select>
+          <select
+            class="form-select"
+            id="districtSelect"
+            onchange="timKiemHuyen()"
+          ></select>
         </div>
-        <div class="col-4">
-          <form action="">
-            <button class="btn btn-success" type="submit">
-              <i class="fa-solid fa-magnifying-glass"></i> Tìm Kiếm
-            </button>
-          </form>
-        </div>
+        <button
+          type="submit"
+          class="btn btn-success"
+          onclick="timKiem(document.getElementById('tukhoa').value)"
+        >
+          Tìm kiếm
+        </button>
       </div>
+
+      <div id="ketqua"></div>
     </div>
 
     <script type="text/javascript">
-      const cityList = "https://thongtindoanhnghiep.co/api/city";
+      let kq = document.querySelector("#ketqua");
+      const hienThiThanhPho = () => {
+        const cityList = "https://thongtindoanhnghiep.co/api/city";
 
-      const fetchData = async (api) => {
-        try {
-          const response = await fetch(api);
-          const countries = await response.json();
-          const value = countries;
-          return value;
-        } catch (err) {
-          console.error(err);
-        }
+        const fetchData = async (api) => {
+          try {
+            const response = await fetch(api);
+            const data = await response.json();
+            const value = data;
+            return value;
+          } catch (err) {
+            console.error(err);
+          }
+        };
+
+        const getCity = new Promise((reso, reje) => {
+          const data = fetchData(cityList);
+          if (data) {
+            reso(data);
+          } else {
+            reje("oops!");
+          }
+        });
+
+        getCity
+          .then((res) => {
+            const cityName = [];
+            let i = 0;
+            for (const item of res.LtsItem) {
+              cityName[i] = [item.ID, item.SolrID, item.Title];
+              i++;
+            }
+            let citySelect = document.querySelector("#citySelect");
+
+            for (let i = 0; i < cityName.length; i++) {
+              let option = document.createElement("option");
+              option.id = cityName[i][0];
+              option.innerHTML = cityName[i][2];
+              option.value = cityName[i][1];
+              citySelect.appendChild(option);
+            }
+          })
+          .catch((err) => console.log(err));
       };
+      hienThiThanhPho();
+      
+      const hienThiQuan = (id = 4) => {
+        removeOptions(document.getElementById("districtSelect"));
 
-      const getCity = new Promise((reso, reje) => {
-        const data = fetchData(cityList);
-        if (data) {
-          reso(data);
-        } else {
-          reje("oops!");
-        }
-      });
-
-      getCity
-        .then((res) => {
-          const cityName = [];
-          let i = 0;
-          for (const item of res.LtsItem) {
-            cityName[i] = [item.ID, item.Title];
-            i++;
-          }
-          let citySelect = document.querySelector("#citySelect");
-
-          for (let i = 0; i < cityName.length; i++) {
-            let option = document.createElement("option");
-            option.id = cityName[i][0];
-            option.innerHTML = cityName[i][1];
-            option.value = cityName[i][0];
-            citySelect.appendChild(option);
-          }
-        })
-        .catch((err) => console.log(err));
-
-      const hienThiQuan = (id) => {
         const districtList =
           "https://thongtindoanhnghiep.co/api/city/" + id + "/district";
-
         const districtName = [];
 
+        const fetchData = async (api) => {
+          try {
+            const response = await fetch(api);
+            const data = await response.json();
+            const value = data;
+            return value;
+          } catch (err) {
+            console.error(err);
+          }
+        };
         const getDisctrict = new Promise((reso, reje) => {
           const data = fetchData(districtList);
           if (data) {
@@ -91,29 +118,134 @@
             reje("oops!");
           }
         });
-
         getDisctrict
           .then((res) => {
+            console.log(res);
             let i = 0;
             for (const item of res) {
-              districtName[i] = [item.ID, item.Title];
+              districtName[i] = [item.ID, item.SolrID, item.Title];
               i++;
+            }
+            let districtSelect = document.querySelector("#districtSelect");
+            for (let i = 0; i < districtName.length; i++) {
+              let option = document.createElement("option");
+              option.id = districtName[i][0];
+              option.innerHTML = districtName[i][2];
+              option.value = districtName[i][1];
+              districtSelect.appendChild(option);
             }
           })
           .catch((err) => console.log(err));
-          let districtSelect = document.querySelector("#districtSelect");
-          for (let i = 0; i < districtName.length; i++) {
-            let option = document.createElement("option");
-            option.id = districtName[i][0];
-            option.innerHTML = districtName[i][1];
-            option.value = districtName[i][0];
-            districtSelect.appendChild(option);
-          }
       };
+      function removeOptions(selectElement) {
+        var i,
+          L = selectElement.options.length - 1;
+        for (i = L; i >= 0; i--) {
+          selectElement.remove(i);
+        }
+      }
 
-      let city = document.getElementById("citySelect");
-      let cityID = city.value;
-      hienThiQuan(cityID);
+      function timKiem(key) {
+        const api = "https://thongtindoanhnghiep.co/api/company?k=" + key;
+        const fetchData = async (api) => {
+          try {
+            const response = await fetch(api);
+            const data = await response.json();
+            const value = data;
+            return value;
+          } catch (err) {
+            console.error(err);
+          }
+        };
+        const getData = new Promise((reso, reje) => {
+          const data = fetchData(api);
+          if (data) {
+            reso(data);
+          } else {
+            reje("oops!");
+          }
+        });
+        kq.innerHTML = "";
+        getData
+          .then((res) => {
+            console.log(res);
+            let p1 = document.createElement("p");
+            let p2 = document.createElement("p");
+            let p3 = document.createElement("p");
+            let p4 = document.createElement("p");
+
+            p1.innerHTML = res.LtsItems[0].Title;
+            p1.className = "h2";
+
+            p2.innerHTML = res.LtsItems[0].MaSoThue;
+            p3.innerHTML = res.LtsItems[0].DiaChiCongTy;
+            p4.innerHTML = res.LtsItems[0].NganhNgheTitle;
+
+            kq.appendChild(p1);
+            kq.appendChild(p2);
+            kq.appendChild(p3);
+            kq.appendChild(p4);
+          })
+          .catch((err) => console.log(err));
+      }
+
+      function timKiemHuyen() {
+        let key2 = $("#districtSelect").val();
+        const api = "https://thongtindoanhnghiep.co/api/company?l=" + key2;
+        const fetchData = async (api) => {
+          try {
+            const response = await fetch(api);
+            const data = await response.json();
+            const value = data;
+            return value;
+          } catch (err) {
+            console.error(err);
+          }
+        };
+        const getData = new Promise((reso, reje) => {
+          const data = fetchData(api);
+          if (data) {
+            reso(data);
+          } else {
+            reje("oops!");
+          }
+        });
+        kq.innerHTML = "";
+        getData
+          .then((res) => {
+            console.log(res.LtsItems);
+            let data = [];
+            let i = 0;
+            for (const item of res.LtsItems) {
+              data[i] = [
+                item.Title,
+                item.MaSoThue,
+                item.DiaChiCongTy,
+                item.NganhNgheTitle,
+              ];
+              i++;
+            }
+            for (let i = 0; i < data.length; i++) {
+              let p1 = document.createElement("p");
+              let p2 = document.createElement("p");
+              let p3 = document.createElement("p");
+              let p4 = document.createElement("p");
+
+              p1.innerHTML = data[i][0];
+              p1.className = "h2";
+
+              p2.innerHTML = data[i][1];
+              p3.innerHTML = data[i][2];
+              p4.innerHTML = data[i][3];
+
+              kq.appendChild(p1);
+              kq.appendChild(p2);
+              kq.appendChild(p3);
+              kq.appendChild(p4);
+            }
+          })
+          .catch((err) => console.log(err));
+      }
     </script>
 
     <script
