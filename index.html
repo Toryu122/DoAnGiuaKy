@@ -169,19 +169,20 @@
         getData
           .then((res) => {
             console.log(res);
-            let p1 = document.createElement("p");
+            let a = document.createElement("a");
             let p2 = document.createElement("p");
             let p3 = document.createElement("p");
             let p4 = document.createElement("p");
 
-            p1.innerHTML = res.LtsItems[0].Title;
-            p1.className = "h2";
+            a.innerHTML = res.LtsItems[0].Title;
+            a.className = "h2 text-decoration-none text-success";
+            a.href = "/detail.html?masothue="+res.LtsItems[0].MaSoThue;
 
             p2.innerHTML = res.LtsItems[0].MaSoThue;
             p3.innerHTML = res.LtsItems[0].DiaChiCongTy;
             p4.innerHTML = res.LtsItems[0].NganhNgheTitle;
 
-            kq.appendChild(p1);
+            kq.appendChild(a);
             kq.appendChild(p2);
             kq.appendChild(p3);
             kq.appendChild(p4);
@@ -226,19 +227,20 @@
               i++;
             }
             for (let i = 0; i < data.length; i++) {
-              let p1 = document.createElement("p");
+              let a = document.createElement("a");
               let p2 = document.createElement("p");
               let p3 = document.createElement("p");
               let p4 = document.createElement("p");
 
-              p1.innerHTML = data[i][0];
-              p1.className = "h2";
+              a.innerHTML = data[i][0];
+              a.className = "h2 text-decoration-none text-success";
+              a.href = "/detail.html?masothue="+data[i][1];
 
               p2.innerHTML = data[i][1];
               p3.innerHTML = data[i][2];
               p4.innerHTML = data[i][3];
 
-              kq.appendChild(p1);
+              kq.appendChild(a);
               kq.appendChild(p2);
               kq.appendChild(p3);
               kq.appendChild(p4);

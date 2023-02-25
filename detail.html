@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container pt-5">
+      <a href="index.html"><button class="btn btn-secondary">Quay lại</button></a>
+      <h3 class="text-info">Thông tin chi tiết</h3>
+      <div id="detail">
+
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      const chiTietDoanhNghiep = () => {
+        let url = document.URL;
+        let urlStr = new URL(url);
+
+        let key = urlStr.searchParams.get("masothue");
+
+        const api = "https://thongtindoanhnghiep.co/api/company/" + key;
+        const fetchData = async (api) => {
+          try {
+            const response = await fetch(api);
+            const data = await response.json();
+            const value = data;
+            return value;
+          } catch (err) {
+            console.error(err);
+          }
+        };
+        const getData = new Promise((reso, reje) => {
+          const data = fetchData(api);
+          if (data) {
+            reso(data);
+          } else {
+            reje("oops!");
+          }
+        });
+        let detail = document.querySelector("#detail");
+        getData
+          .then((res) => {
+            console.log(res);
+            let p1 = document.createElement("p");
+            let p2 = document.createElement("p");
+            let p3 = document.createElement("p");
+            let p4 = document.createElement("p");
+            let p5 = document.createElement("p");
+            let p6 = document.createElement("p");
+
+            p1.innerHTML = "<b>Mã số ĐTNT:</b> "+res.MaSoThue;
+            p2.innerHTML = "<b>Ngày cấp:</b>  "+res.NgayNhanToKhai;
+            p3.innerHTML = "<b>Chủ sở hữu:</b>  "+res.ChuSoHuu;
+            p4.innerHTML = "<b>Địa chỉ công ty:</b>  "+res.DiaChiCongTy;
+            p5.innerHTML = "<b>Tên giao dịch:</b>  "+res.TitleEn;
+            p6.innerHTML = "<b>Ngành nghề chính:</b>  "+res.NganhNgheTitle;
+
+            detail.appendChild(p1);
+            detail.appendChild(p2);
+            detail.appendChild(p3);
+            detail.appendChild(p4);
+            detail.appendChild(p5);
+            detail.appendChild(p6);
+          })
+          .catch((err) => console.log(err));
+      };
+
+      chiTietDoanhNghiep();
+    </script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+      integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/ee39434323.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+      integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+      integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
